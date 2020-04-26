@@ -19,17 +19,18 @@ try {
             passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 def pre_version= readFile(file : 'version.txt')
 				sh "echo Old Version: $pre_version"
+				sh "chmod +x ${WORKSPACE}/version_gen.sh"
 				new_version=sh ( 
-					script: "version_gen.sh $pre_version",
+					script: "${WORKSPACE}/version_gen.sh $pre_version",
 					returnStdout: true
 				  ).trim()
                 sh "echo New Version: $new_version"
-                writeFile(file: 'version.conf', text: new_version)
+                writeFile(file: 'version.txt', text: new_version)
                 sh "git add -f .";
                 sh "git commit -m 'Jenkins Build'";
-                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/kishore-stack-built/sonar-test.git"
+                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/kishore-stack-built/HelloWorld.git"
                 sh "git tag -a $new_version -m 'Jenkins Tag Created - $new_version'"
-                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/kishore-stack-built/sonar-test.git --tags"
+                sh "git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/kishore-stack-built/HelloWorld.git --tags"
                 def versionBuild = currentBuild.number
                 currentBuild.displayName = "#${versionBuild} - ${new_version}"
             }

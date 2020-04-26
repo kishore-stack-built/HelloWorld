@@ -19,8 +19,10 @@ try {
             passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                 def pre_version= readFile(file : 'version.txt')
 				sh "echo Old Version: $pre_version"
-				def new_version="";
-                sh "version_gen.sh $pre_version">new_version
+				new_version=sh ( 
+					script: "version_gen.sh $pre_version",
+					returnStdout: true
+				  ).trim()
                 sh "echo New Version: $new_version"
                 writeFile(file: 'version.conf', text: new_version)
                 sh "git add -f .";

@@ -36,6 +36,33 @@ try {
             }
         }
     }
+	stage('Maven Build & SonarQube Scanner') {
+        node('master') {
+            last_stage = env.STAGE_NAME
+            dir("${WORKSPACE}/helloworld-dev-build/com.stackbuilt.web/") {
+                withSonarQubeEnv('SonarQubeServer') {
+					artifactId = sh (
+						script: 'mvn help:evaluate -Dexpression=project.artifactId -DforceStdout -q', 
+						returnStdout: true
+						).trim()
+                    sh "mvn clean package versions:set -DnewVersion=$new_version -DgenerateBackupPoms=false sonar:sonar -Dsonar.host.url=http://192.168.0.112:9000/ -Dsonar.projectName='$artifactId_$GIT_BRANCH' -Dsonar.projectVersion=$new_version -Dsonar.analysis.buildNumber=$new_version -Dsonar.login='M5RWiy6MCS6+jC/xNBiIyA=='"
+                }
+            }
+        }
+    }
+	stage('Quality Gate Check'){
+        node('master') {
+            last_stage = env.STAGE_NAME
+            sleep(10)
+            timeout(time: 10, unit: 'MINUTES') {
+               def qg = waitForQualityGate()
+               print "Finished waiting"
+               if (qg.status != 'OK') {
+                   error "Pipeline aborted due to quality gate failure: ${qg.status}"
+               }
+            }
+        }
+    }
 }catch(err) {
     currentBuild.result = "FAILURE"
     throw err;

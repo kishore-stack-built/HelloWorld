@@ -39,7 +39,7 @@ try {
 	stage('Maven Build & SonarQube Scanner') {
         node('master') {
             last_stage = env.STAGE_NAME
-            dir("${WORKSPACE}/helloworld-dev-build/com.stackbuilt.web/") {
+            dir("${WORKSPACE}/com.stackbuilt.web/") {
                 withSonarQubeEnv('SonarQubeServer') {
 					def pom = readMavenPom file: 'pom.xml'
                     sh "mvn clean package versions:set -DnewVersion=$new_version -DgenerateBackupPoms=false sonar:sonar -Dsonar.host.url=http://192.168.0.112:9000/ -Dsonar.projectName='${pom.artifactId}_$GIT_BRANCH' -Dsonar.projectVersion=$new_version -Dsonar.analysis.buildNumber=$new_version -Dsonar.login='M5RWiy6MCS6+jC/xNBiIyA=='"

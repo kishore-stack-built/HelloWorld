@@ -42,9 +42,8 @@ try {
             dir("${WORKSPACE}/com.stackbuilt.web/") {
                 withSonarQubeEnv('SonarQubeServer') {
 					def pom = readMavenPom file: 'pom.xml'
-					pom.version="${new_version}"
-					writeMavenPom model: pom
-                    sh "mvn clean package versions:set -DnewVersion=$new_version -DgenerateBackupPoms=false sonar:sonar -Dsonar.host.url=http://192.168.0.112:9000 -Dsonar.projectName='${pom.artifactId}_$GIT_BRANCH' -Dsonar.projectVersion=$new_version -Dsonar.analysis.buildNumber=$new_version -Dsonar.login='035b95a77244fb9d5d1b62043404e54f7f2ac52c'"
+					sh "mvn versions:set -DnewVersion=$new_version -f pom.xml"
+                    sh "mvn clean verify -DgenerateBackupPoms=false sonar:sonar -Dsonar.host.url=http://192.168.0.112:9000 -Dsonar.projectName='${pom.artifactId}_$GIT_BRANCH' -Dsonar.projectVersion=$new_version -Dsonar.analysis.buildNumber=$new_version -Dsonar.login='035b95a77244fb9d5d1b62043404e54f7f2ac52c'"
                 }
             }
         }

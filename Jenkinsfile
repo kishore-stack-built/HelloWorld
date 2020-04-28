@@ -77,15 +77,15 @@ try {
 				// Verify artifact name exist or not
 				artifactExists = fileExists artifactPath;
 				if(artifactExists) {
-					echo "*** File: ${artifactPath}, group: ${pom.groupId}, artifact: ${pom.artifactId}, packaging: ${pom.packaging}, version ${pom.version}";
+					echo "*** File: ${artifactPath}, group: ${pom.parent.groupId}, artifact: ${pom.artifactId}, packaging: ${pom.packaging}, version ${pom.parent.version}";
 					nexusPublisher (
 						nexusInstanceId: 'NexusRepo', 
 						nexusRepositoryId: 'maven-releases',
 						packages: [
 							[$class: 'MavenPackage', 
-								mavenCoordinate: [groupId: '${pom.groupId}', artifactId: '${pom.artifactId}', version: '${pom.version}', packaging : '${pom.packaging}'],
+								mavenCoordinate: [groupId: pom.parent.groupId, artifactId: pom.artifactId, version: pom.parent.version, packaging : 'pom.packaging],
 								mavenAssetList: [
-									[classifier: '', extension: '', filePath: '${artifactPath}']
+									[classifier: '', extension: '', filePath: artifactPath]
 								]
 							]
 						]

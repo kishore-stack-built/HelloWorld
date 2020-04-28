@@ -83,7 +83,7 @@ try {
 						nexusRepositoryId: 'maven-releases',
 						packages: [
 							[$class: 'MavenPackage', 
-								mavenCoordinate: [groupId: pom.parent.groupId, artifactId: pom.artifactId, version: pom.parent.version, packaging : 'pom.packaging],
+								mavenCoordinate: [groupId: pom.parent.groupId, artifactId: pom.artifactId, version: pom.parent.version, packaging : pom.packaging],
 								mavenAssetList: [
 									[classifier: '', extension: '', filePath: artifactPath]
 								]

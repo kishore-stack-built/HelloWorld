@@ -60,6 +60,27 @@ try {
             }
         }
     }
+	stage('Nexus Publish'){
+		echo 'Publish to Nexus Repository....'
+		dir("${WORKSPACE}/com.stackbuilt.web.helloworld/") {
+			// Read POM xml file using 'readMavenPom'
+			pom = readMavenPom file: "pom.xml";
+			// Find built artifact under Target folder
+            filesByGlob = findFiles(glob: "target/*.${pom.packaging}");
+			// Print some info from the artifact found
+			echo "${filesByGlob[0].name} ${filesByGlob[0].path} ${filesByGlob[0].directory} ${filesByGlob[0].length}"
+			// Extract the path from the file found
+			artifactPath = filesByGlob[0].path;
+			// Verify artifact name exist or not
+			artifactExists = filesExists artifactPath;
+			if(artifactExists) {
+				echo "*** File: ${artifactPath}, group: ${pom.groupId}, artifact: ${pom.artifactId}, packaging: ${pom.packaging}, version ${pom.version}";
+			}else {
+				error "*** File: ${artifactPath}, could not be found";
+			}
+		}
+		
+	}
 }catch(err) {
     currentBuild.result = "FAILURE"
     throw err;

@@ -75,9 +75,21 @@ try {
 				// Extract the path from the file found
 				artifactPath = filesByGlob[0].path;
 				// Verify artifact name exist or not
-				artifactExists = filesExists artifactPath;
+				artifactExists = fileExists artifactPath;
 				if(artifactExists) {
 					echo "*** File: ${artifactPath}, group: ${pom.groupId}, artifact: ${pom.artifactId}, packaging: ${pom.packaging}, version ${pom.version}";
+					nexusPublisher (
+						nexusInstanceId: 'NexusRepo', 
+						nexusRepositoryId: 'maven-releases',
+						packages: [
+							[$class: 'MavenPackage', 
+								mavenCoordinate: [groupId: '${pom.groupId}', artifactId: '${pom.artifactId}', version: '${pom.version}', packaging : '${pom.packaging}'],
+								mavenAssetList: [
+									[classifier: '', extension: '', filePath: '${artifactPath}']
+								]
+							]
+						]
+					);
 				}else {
 					error "*** File: ${artifactPath}, could not be found";
 				}
